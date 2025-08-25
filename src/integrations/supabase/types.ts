@@ -50,6 +50,96 @@ export type Database = {
         }
         Relationships: []
       }
+      properties: {
+        Row: {
+          address: string | null
+          amenities: string[] | null
+          bathrooms: number | null
+          bedrooms: number | null
+          created_at: string
+          description: string | null
+          host_id: string
+          id: string
+          images: string[] | null
+          is_active: boolean | null
+          latitude: number | null
+          location: string
+          longitude: number | null
+          max_guests: number | null
+          price_per_night: number | null
+          property_type: Database["public"]["Enums"]["property_type"]
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          address?: string | null
+          amenities?: string[] | null
+          bathrooms?: number | null
+          bedrooms?: number | null
+          created_at?: string
+          description?: string | null
+          host_id: string
+          id?: string
+          images?: string[] | null
+          is_active?: boolean | null
+          latitude?: number | null
+          location: string
+          longitude?: number | null
+          max_guests?: number | null
+          price_per_night?: number | null
+          property_type: Database["public"]["Enums"]["property_type"]
+          title: string
+          updated_at?: string
+        }
+        Update: {
+          address?: string | null
+          amenities?: string[] | null
+          bathrooms?: number | null
+          bedrooms?: number | null
+          created_at?: string
+          description?: string | null
+          host_id?: string
+          id?: string
+          images?: string[] | null
+          is_active?: boolean | null
+          latitude?: number | null
+          location?: string
+          longitude?: number | null
+          max_guests?: number | null
+          price_per_night?: number | null
+          property_type?: Database["public"]["Enums"]["property_type"]
+          title?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      property_categories: {
+        Row: {
+          color: string | null
+          created_at: string
+          description: string | null
+          icon: string | null
+          id: string
+          name: string
+        }
+        Insert: {
+          color?: string | null
+          created_at?: string
+          description?: string | null
+          icon?: string | null
+          id?: string
+          name: string
+        }
+        Update: {
+          color?: string | null
+          created_at?: string
+          description?: string | null
+          icon?: string | null
+          id?: string
+          name?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
@@ -58,7 +148,13 @@ export type Database = {
       [_ in never]: never
     }
     Enums: {
-      [_ in never]: never
+      property_type:
+        | "hotel"
+        | "villa"
+        | "bungalow"
+        | "attraction"
+        | "apartment"
+        | "guesthouse"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -185,6 +281,15 @@ export type CompositeTypes<
 
 export const Constants = {
   public: {
-    Enums: {},
+    Enums: {
+      property_type: [
+        "hotel",
+        "villa",
+        "bungalow",
+        "attraction",
+        "apartment",
+        "guesthouse",
+      ],
+    },
   },
 } as const
