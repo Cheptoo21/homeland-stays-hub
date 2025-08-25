@@ -43,6 +43,7 @@ const Header = () => {
           </div>
           
           <nav className="hidden md:flex items-center space-x-8">
+            <a href="/search" className="text-white hover:text-white/80 transition-colors">Search</a>
             <a href="#" className="text-white hover:text-white/80 transition-colors">Stays</a>
             <a href="#" className="text-white hover:text-white/80 transition-colors">Experiences</a>
             <a href="#" className="text-white hover:text-white/80 transition-colors">Host</a>

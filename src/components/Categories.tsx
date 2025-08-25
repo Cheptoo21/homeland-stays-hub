@@ -11,39 +11,48 @@ const categories = [
     description: "Unique homes with local character",
     icon: Home,
     image: heroVilla,
-    count: "1,000+"
+    count: "1,000+",
+    type: "apartment"
   },
   {
     title: "Hotels",
     description: "Professional hospitality & service",
     icon: Hotel,
     image: heroHotel,
-    count: "500+"
+    count: "500+",
+    type: "hotel"
   },
   {
     title: "Villas",
     description: "Luxury private retreats",
     icon: Home,
     image: heroVilla,
-    count: "300+"
+    count: "300+",
+    type: "villa"
   },
   {
     title: "Bungalows",
     description: "Cozy nature escapes",
     icon: TreePine,
     image: heroBungalow,
-    count: "200+"
+    count: "200+",
+    type: "bungalow"
   },
   {
     title: "Attractions",
     description: "Adventures & experiences",
     icon: Camera,
     image: heroAttractions,
-    count: "150+"
+    count: "150+",
+    type: "attraction"
   }
 ];
 
-const Categories = () => {
+interface CategoriesProps {
+  onCategorySelect?: (category: string) => void;
+}
+
+const Categories = ({ onCategorySelect }: CategoriesProps) => {
   return (
     <section className="py-20 bg-gradient-to-b from-background to-primary-light/20">
       <div className="container mx-auto px-4">
@@ -63,6 +72,7 @@ const Categories = () => {
               <Card 
                 key={index}
                 className="group cursor-pointer overflow-hidden border-0 shadow-lg hover:shadow-xl transition-all duration-500 transform hover:scale-105"
+                onClick={() => onCategorySelect?.(category.type)}
               >
                 <div className="relative h-48 overflow-hidden">
                   <img 
