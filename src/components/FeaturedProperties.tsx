@@ -2,6 +2,8 @@ import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { MapPin, Users, Bed, Clock, Star } from "lucide-react";
+import { useNavigate } from "react-router-dom";
+import { useToast } from "@/hooks/use-toast";
 import heroVilla from "@/assets/hero-villa.jpg";
 import heroHotel from "@/assets/hero-hotel.jpg";
 import heroBungalow from "@/assets/hero-bungalow.jpg";
@@ -52,6 +54,23 @@ const properties = [
 ];
 
 const FeaturedProperties = () => {
+  const navigate = useNavigate();
+  const { toast } = useToast();
+
+  const handleBookNow = (property: typeof properties[0]) => {
+    // For now, show a toast message since booking system isn't implemented yet
+    toast({
+      title: "Booking Interest Registered!",
+      description: `We'll redirect you to book "${property.title}" soon. Booking system coming next!`,
+    });
+    
+    // TODO: Navigate to booking page when implemented
+    // navigate(`/book/${property.id}`);
+  };
+
+  const handleViewAll = () => {
+    navigate('/search');
+  };
   return (
     <section className="py-20 bg-background">
       <div className="container mx-auto px-4">
@@ -121,7 +140,11 @@ const FeaturedProperties = () => {
                       {property.reviews} reviews
                     </div>
                   </div>
-                  <Button variant="default" className="hover:bg-primary-hover">
+                  <Button 
+                    variant="default" 
+                    className="hover:bg-primary-hover"
+                    onClick={() => handleBookNow(property)}
+                  >
                     Book Now
                   </Button>
                 </div>
@@ -131,7 +154,7 @@ const FeaturedProperties = () => {
         </div>
         
         <div className="text-center mt-12">
-          <Button variant="outline" size="lg">
+          <Button variant="outline" size="lg" onClick={handleViewAll}>
             View All Properties
           </Button>
         </div>
