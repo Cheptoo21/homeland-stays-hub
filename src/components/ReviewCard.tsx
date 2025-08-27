@@ -9,6 +9,20 @@ import { format } from 'date-fns';
 import { useToast } from '@/hooks/use-toast';
 import { supabase } from '@/integrations/supabase/client';
 
+// Temporary interface until types are regenerated
+interface ReviewRow {
+  id: string;
+  booking_id: string;
+  property_id: string;
+  reviewer_id: string;
+  rating: number;
+  comment: string | null;
+  host_reply: string | null;
+  host_reply_at: string | null;
+  created_at: string;
+  updated_at: string;
+}
+
 interface Review {
   id: string;
   rating: number;
@@ -38,7 +52,7 @@ export const ReviewCard = ({ review, isHost = false, onReplyAdded }: ReviewCardP
 
     setIsSubmitting(true);
     try {
-      const { error } = await supabase
+      const { error } = await (supabase as any)
         .from('reviews')
         .update({ 
           host_reply: replyText,
