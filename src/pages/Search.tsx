@@ -4,8 +4,9 @@ import Header from '@/components/Header';
 import SearchBar from '@/components/SearchBar';
 import SearchFilters from '@/components/SearchFilters';
 import PropertyCard from '@/components/PropertyCard';
+import PropertyDetailsModal from '@/components/PropertyDetailsModal';
 import Categories from '@/components/Categories';
-import { useSearch, SearchFilters as SearchFiltersType } from '@/hooks/useSearch';
+import { useSearch, SearchFilters as SearchFiltersType, Property } from '@/hooks/useSearch';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Card, CardContent } from '@/components/ui/card';
 
@@ -14,6 +15,8 @@ const Search = () => {
   const [query, setQuery] = useState(searchParams.get('q') || '');
   const [filters, setFilters] = useState<SearchFiltersType>({});
   const [showFilters, setShowFilters] = useState(false);
+  const [selectedProperty, setSelectedProperty] = useState<Property | null>(null);
+  const [isPropertyModalOpen, setIsPropertyModalOpen] = useState(false);
   const { properties, loading, error, searchProperties } = useSearch();
 
   useEffect(() => {
@@ -69,6 +72,16 @@ const Search = () => {
   const handleCategorySelect = (category: string) => {
     const newFilters = { ...filters, property_type: category.toLowerCase() };
     handleSearch(query, newFilters);
+  };
+
+  const handlePropertyClick = (property: Property) => {
+    setSelectedProperty(property);
+    setIsPropertyModalOpen(true);
+  };
+
+  const handleClosePropertyModal = () => {
+    setIsPropertyModalOpen(false);
+    setSelectedProperty(null);
   };
 
   return (
@@ -147,10 +160,7 @@ const Search = () => {
                   <PropertyCard
                     key={property.id}
                     property={property}
-                    onClick={() => {
-                      // TODO: Navigate to property details page
-                      console.log('Property clicked:', property.id);
-                    }}
+                    onClick={() => handlePropertyClick(property)}
                   />
                 ))}
               </div>
@@ -173,6 +183,13 @@ const Search = () => {
           </div>
         </div>
       </main>
+
+      {/* Property Details Modal */}
+      <PropertyDetailsModal
+        property={selectedProperty}
+        isOpen={isPropertyModalOpen}
+        onClose={handleClosePropertyModal}
+      />
     </div>
   );
 };
