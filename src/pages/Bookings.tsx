@@ -1,22 +1,25 @@
-import { useState, useEffect } from 'react';
-import { Calendar, Filter, Search } from 'lucide-react';
+import React, { useState, useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
-import { Button } from '@/components/ui/button';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Badge } from '@/components/ui/badge';
-import { Skeleton } from '@/components/ui/skeleton';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { Skeleton } from '@/components/ui/skeleton';
+import { Calendar, MapPin, Users, CreditCard, Search, Filter } from 'lucide-react';
 import { useBooking } from '@/hooks/useBooking';
 import { useToast } from '@/hooks/use-toast';
-import BookingCard from '@/components/BookingCard';
 import Header from '@/components/Header';
+import BookingCard from '@/components/BookingCard';
+import BookingDetailsModal from '@/components/BookingDetailsModal';
+import { Button } from '@/components/ui/button';
+import { Badge } from '@/components/ui/badge';
 
 const Bookings = () => {
   const [bookings, setBookings] = useState<any[]>([]);
   const [searchQuery, setSearchQuery] = useState('');
   const [statusFilter, setStatusFilter] = useState<string>('all');
   const [activeTab, setActiveTab] = useState('all');
+  const [selectedBooking, setSelectedBooking] = useState<any>(null);
+  const [isDetailsModalOpen, setIsDetailsModalOpen] = useState(false);
   
   const { getUserBookings, updateBookingStatus, loading } = useBooking();
   const { toast } = useToast();
@@ -38,26 +41,26 @@ const Bookings = () => {
     }
   };
 
-  const handleStatusChange = async (bookingId: string, newStatus: string) => {
+  const handleStatusChange = async (bookingId: string, status: string) => {
     try {
-      await updateBookingStatus(bookingId, newStatus);
-      await loadBookings(); // Reload bookings
+      await updateBookingStatus(bookingId, status);
       toast({
         title: "Booking updated",
-        description: `Booking status changed to ${newStatus}.`,
+        description: "Booking status has been updated successfully.",
       });
+      loadBookings();
     } catch (error) {
       toast({
-        title: "Error updating booking",
-        description: "Failed to update booking status. Please try again.",
+        title: "Error",
+        description: "Failed to update booking status.",
         variant: "destructive",
       });
     }
   };
 
   const handleViewDetails = (booking: any) => {
-    // TODO: Open booking details modal
-    console.log('View booking details:', booking);
+    setSelectedBooking(booking);
+    setIsDetailsModalOpen(true);
   };
 
   // Filter bookings based on search and status
@@ -287,6 +290,14 @@ const Bookings = () => {
           </div>
         </div>
       </main>
+
+      <BookingDetailsModal
+        booking={selectedBooking}
+        isOpen={isDetailsModalOpen}
+        onClose={() => setIsDetailsModalOpen(false)}
+        userRole="guest"
+        onStatusChange={handleStatusChange}
+      />
     </div>
   );
 };

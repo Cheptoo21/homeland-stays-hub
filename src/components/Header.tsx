@@ -1,5 +1,5 @@
 import { Button } from "@/components/ui/button";
-import { Home, Menu, User, Heart, LogOut, LogIn } from "lucide-react";
+import { Home, Menu, User, Heart, LogOut, LogIn, Calendar } from "lucide-react";
 import { useAuth } from "@/hooks/useAuth";
 import { useNavigate } from "react-router-dom";
 import { useToast } from "@/hooks/use-toast";
@@ -44,20 +44,37 @@ const Header = () => {
           
           <nav className="hidden md:flex items-center space-x-8">
             <a href="/search" className="text-white hover:text-white/80 transition-colors">Search</a>
-            <a href="#" className="text-white hover:text-white/80 transition-colors">Stays</a>
+            {user && (
+              <a href="/bookings" className="text-white hover:text-white/80 transition-colors">My Bookings</a>
+            )}
             <a href="#" className="text-white hover:text-white/80 transition-colors">Experiences</a>
             <a href="#" className="text-white hover:text-white/80 transition-colors">Host</a>
             <a href="#" className="text-white hover:text-white/80 transition-colors">Help</a>
           </nav>
           
           <div className="flex items-center space-x-4">
-            <Button variant="ghost" size="sm" className="text-white hover:text-white/80 hidden md:flex">
-              List Your Property
+            <Button 
+              variant="ghost" 
+              size="sm" 
+              className="text-white hover:text-white/80 hidden md:flex"
+              onClick={() => navigate('/dashboard')}
+            >
+              {user ? 'Dashboard' : 'List Your Property'}
             </Button>
             {user && (
-              <Button variant="glass" size="icon">
-                <Heart className="h-4 w-4" />
-              </Button>
+              <>
+                <Button 
+                  variant="glass" 
+                  size="icon"
+                  onClick={() => navigate('/bookings')}
+                  className="md:hidden"
+                >
+                  <Calendar className="h-4 w-4" />
+                </Button>
+                <Button variant="glass" size="icon">
+                  <Heart className="h-4 w-4" />
+                </Button>
+              </>
             )}
             <Button variant="glass" size="icon" onClick={handleAuthClick}>
               {user ? <LogOut className="h-4 w-4" /> : <LogIn className="h-4 w-4" />}

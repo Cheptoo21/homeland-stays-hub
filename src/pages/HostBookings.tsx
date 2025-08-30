@@ -10,6 +10,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { useToast } from '@/hooks/use-toast';
 import { supabase } from '@/integrations/supabase/client';
 import BookingCard from '@/components/BookingCard';
+import BookingDetailsModal from '@/components/BookingDetailsModal';
 
 const HostBookings = () => {
   const [bookings, setBookings] = useState<any[]>([]);
@@ -18,6 +19,8 @@ const HostBookings = () => {
   const [statusFilter, setStatusFilter] = useState<string>('all');
   const [propertyFilter, setPropertyFilter] = useState<string>('all');
   const [activeTab, setActiveTab] = useState('all');
+  const [selectedBooking, setSelectedBooking] = useState<any>(null);
+  const [isDetailsModalOpen, setIsDetailsModalOpen] = useState(false);
   
   const { toast } = useToast();
 
@@ -88,7 +91,8 @@ const HostBookings = () => {
   };
 
   const handleViewDetails = (booking: any) => {
-    console.log('View booking details:', booking);
+    setSelectedBooking(booking);
+    setIsDetailsModalOpen(true);
   };
 
   // Get unique properties for filter
@@ -334,6 +338,14 @@ const HostBookings = () => {
           )}
         </TabsContent>
       </Tabs>
+
+      <BookingDetailsModal
+        booking={selectedBooking}
+        isOpen={isDetailsModalOpen}
+        onClose={() => setIsDetailsModalOpen(false)}
+        userRole="host"
+        onStatusChange={handleStatusChange}
+      />
     </div>
   );
 };
