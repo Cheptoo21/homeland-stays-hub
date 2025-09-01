@@ -36,8 +36,8 @@ export function AppSidebar() {
     <Sidebar
       variant="sidebar"
       collapsible="icon"
+      className="z-50"
     >
-      <SidebarTrigger className="m-2 self-end" />
 
       <SidebarContent>
         <SidebarGroup>

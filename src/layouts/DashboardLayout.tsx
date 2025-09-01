@@ -22,9 +22,9 @@ export function DashboardLayout({ children }: DashboardLayoutProps) {
         <AppSidebar />
         
         <div className="flex-1 flex flex-col">
-          <header className="h-16 flex items-center justify-between border-b px-6 bg-background">
+          <header className="h-16 flex items-center justify-between border-b px-6 bg-background relative z-40">
             <div className="flex items-center gap-4">
-              <SidebarTrigger />
+              <SidebarTrigger className="z-50" />
               <h1 className="text-xl font-semibold">Host Dashboard</h1>
             </div>
             
