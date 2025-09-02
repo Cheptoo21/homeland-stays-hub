@@ -7,12 +7,16 @@ import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Checkbox } from "@/components/ui/checkbox";
 import { useNavigate } from "react-router-dom";
-import { ArrowLeft, Upload, X } from "lucide-react";
+import { ArrowLeft } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
+import { supabase } from "@/integrations/supabase/client";
+import { useAuth } from "@/hooks/useAuth";
+import ImageUpload from "@/components/ImageUpload";
 
 export default function AddProperty() {
   const navigate = useNavigate();
   const { toast } = useToast();
+  const { user } = useAuth();
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [images, setImages] = useState<string[]>([]);
 
@@ -48,54 +52,59 @@ export default function AddProperty() {
     }));
   };
 
-  const handleImageUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const files = event.target.files;
-    if (files) {
-      // Mock image upload - in production, upload to Supabase Storage
-      Array.from(files).forEach(file => {
-        const reader = new FileReader();
-        reader.onload = (e) => {
-          if (e.target?.result) {
-            setImages(prev => [...prev, e.target!.result as string]);
-          }
-        };
-        reader.readAsDataURL(file);
-      });
-    }
-  };
-
-  const removeImage = (index: number) => {
-    setImages(prev => prev.filter((_, i) => i !== index));
-  };
-
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    
+    if (!user) {
+      toast({
+        title: "Authentication required",
+        description: "Please sign in to add a property.",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    if (images.length === 0) {
+      toast({
+        title: "Images required",
+        description: "Please upload at least one image of your property.",
+        variant: "destructive",
+      });
+      return;
+    }
+
     setIsSubmitting(true);
 
     try {
-      // TODO: Submit to Supabase
-      // const { error } = await supabase.from('properties').insert({
-      //   ...formData,
-      //   price_per_night: parseFloat(formData.price_per_night),
-      //   max_guests: parseInt(formData.max_guests),
-      //   bedrooms: parseInt(formData.bedrooms),
-      //   bathrooms: parseInt(formData.bathrooms),
-      //   images,
-      //   host_id: user.id
-      // });
+      const { error } = await supabase.from('properties').insert({
+        title: formData.title,
+        description: formData.description,
+        location: formData.location,
+        address: formData.address,
+        property_type: formData.property_type as 'hotel' | 'villa' | 'bungalow' | 'attraction' | 'apartment' | 'guesthouse',
+        price_per_night: parseFloat(formData.price_per_night),
+        max_guests: parseInt(formData.max_guests),
+        bedrooms: parseInt(formData.bedrooms),
+        bathrooms: parseInt(formData.bathrooms),
+        amenities: formData.amenities,
+        images: images,
+        host_id: user.id,
+        is_active: true
+      });
 
-      // if (error) throw error;
+      if (error) throw error;
 
       toast({
-        title: "Property Added",
-        description: "Your property has been successfully listed!",
+        title: "Property Added Successfully!",
+        description: "Your property is now live and available for booking.",
       });
 
       navigate("/dashboard/properties");
     } catch (error) {
+      console.error('Property creation error:', error);
       toast({
-        title: "Error",
-        description: "Failed to add property. Please try again.",
+        title: "Error Adding Property",
+        description: error instanceof Error ? error.message : "Failed to add property. Please try again.",
         variant: "destructive",
       });
     } finally {
@@ -146,12 +155,12 @@ export default function AddProperty() {
                     <SelectValue placeholder="Select property type" />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="apartment">Apartment</SelectItem>
-                    <SelectItem value="house">House</SelectItem>
+                    <SelectItem value="hotel">Hotel</SelectItem>
                     <SelectItem value="villa">Villa</SelectItem>
-                    <SelectItem value="condo">Condo</SelectItem>
-                    <SelectItem value="cabin">Cabin</SelectItem>
-                    <SelectItem value="cottage">Cottage</SelectItem>
+                    <SelectItem value="apartment">Apartment</SelectItem>
+                    <SelectItem value="guesthouse">Guesthouse</SelectItem>
+                    <SelectItem value="bungalow">Bungalow</SelectItem>
+                    <SelectItem value="attraction">Attraction</SelectItem>
                   </SelectContent>
                 </Select>
               </div>
@@ -271,51 +280,15 @@ export default function AddProperty() {
 
         <Card>
           <CardHeader>
-            <CardTitle>Photos</CardTitle>
+            <CardTitle>Property Photos</CardTitle>
           </CardHeader>
-          <CardContent className="space-y-4">
-            <div className="flex items-center justify-center w-full">
-              <label
-                htmlFor="image-upload"
-                className="flex flex-col items-center justify-center w-full h-32 border-2 border-dashed border-muted-foreground/25 rounded-lg cursor-pointer hover:bg-muted/50"
-              >
-                <div className="flex flex-col items-center justify-center pt-5 pb-6">
-                  <Upload className="w-8 h-8 mb-2 text-muted-foreground" />
-                  <p className="text-sm text-muted-foreground">
-                    Click to upload images or drag and drop
-                  </p>
-                </div>
-                <input
-                  id="image-upload"
-                  type="file"
-                  className="hidden"
-                  multiple
-                  accept="image/*"
-                  onChange={handleImageUpload}
-                />
-              </label>
-            </div>
-
-            {images.length > 0 && (
-              <div className="grid gap-4 md:grid-cols-3 lg:grid-cols-4">
-                {images.map((image, index) => (
-                  <div key={index} className="relative">
-                    <img
-                      src={image}
-                      alt={`Property ${index + 1}`}
-                      className="w-full h-24 object-cover rounded-lg"
-                    />
-                    <button
-                      type="button"
-                      onClick={() => removeImage(index)}
-                      className="absolute -top-2 -right-2 p-1 bg-destructive text-destructive-foreground rounded-full hover:bg-destructive/90"
-                    >
-                      <X className="w-3 h-3" />
-                    </button>
-                  </div>
-                ))}
-              </div>
-            )}
+          <CardContent>
+            <ImageUpload 
+              images={images}
+              onImagesChange={setImages}
+              maxImages={10}
+              disabled={isSubmitting}
+            />
           </CardContent>
         </Card>
 
