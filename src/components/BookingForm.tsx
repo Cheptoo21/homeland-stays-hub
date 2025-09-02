@@ -11,6 +11,7 @@ import { cn } from '@/lib/utils';
 import { Property } from '@/hooks/useSearch';
 import { useBooking } from '@/hooks/useBooking';
 import { useToast } from '@/hooks/use-toast';
+import { supabase } from '@/integrations/supabase/client';
 
 interface BookingFormProps {
   property: Property;
@@ -64,7 +65,8 @@ const BookingForm = ({ property, onClose }: BookingFormProps) => {
     }
 
     try {
-      await createBooking({
+      // Step 1: Create pending booking
+      const booking = await createBooking({
         property_id: property.id,
         check_in_date: format(checkIn, 'yyyy-MM-dd'),
         check_out_date: format(checkOut, 'yyyy-MM-dd'),
@@ -73,15 +75,33 @@ const BookingForm = ({ property, onClose }: BookingFormProps) => {
       });
 
       toast({
-        title: "Booking successful!",
-        description: "Your booking has been confirmed.",
+        title: "Booking created!",
+        description: "Redirecting to payment...",
       });
-      
+
+      // Step 2: Create Stripe payment session
+      const { data: paymentData, error: paymentError } = await supabase.functions.invoke('create-payment', {
+        body: {
+          booking_id: booking.id,
+          property_title: property.title,
+          amount: total,
+          currency: 'usd'
+        }
+      });
+
+      if (paymentError || !paymentData?.url) {
+        throw new Error(paymentError?.message || 'Payment session creation failed');
+      }
+
+      // Step 3: Redirect to Stripe Checkout
+      window.open(paymentData.url, '_blank');
       onClose();
+      
     } catch (error) {
+      console.error('Booking error:', error);
       toast({
         title: "Booking failed",
-        description: "There was an error processing your booking. Please try again.",
+        description: error instanceof Error ? error.message : "There was an error processing your booking. Please try again.",
         variant: "destructive",
       });
     }

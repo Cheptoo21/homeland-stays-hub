@@ -10,6 +10,7 @@ import { useToast } from '@/hooks/use-toast';
 import Header from '@/components/Header';
 import BookingCard from '@/components/BookingCard';
 import BookingDetailsModal from '@/components/BookingDetailsModal';
+import PaymentRetryButton from '@/components/PaymentRetryButton';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 
@@ -250,13 +251,22 @@ const Bookings = () => {
                 {!loading && filteredBookings.length > 0 && (
                   <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
                     {filteredBookings.map((booking) => (
-                      <BookingCard
-                        key={booking.id}
-                        booking={booking}
-                        userRole="guest"
-                        onStatusChange={handleStatusChange}
-                        onViewDetails={handleViewDetails}
-                      />
+                      <div key={booking.id} className="space-y-2">
+                        <BookingCard
+                          booking={booking}
+                          userRole="guest"
+                          onStatusChange={handleStatusChange}
+                          onViewDetails={handleViewDetails}
+                        />
+                        {booking.status === 'pending' && (
+                          <div className="flex justify-end">
+                            <PaymentRetryButton 
+                              booking={booking}
+                              onPaymentStarted={loadBookings}
+                            />
+                          </div>
+                        )}
+                      </div>
                     ))}
                   </div>
                 )}

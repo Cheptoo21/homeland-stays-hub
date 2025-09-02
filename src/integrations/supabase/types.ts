@@ -21,6 +21,9 @@ export type Database = {
           created_at: string
           guest_id: string
           id: string
+          payment_intent_id: string | null
+          payment_session_id: string | null
+          payment_status: string | null
           property_id: string
           status: string
           total_cost: number
@@ -33,6 +36,9 @@ export type Database = {
           created_at?: string
           guest_id: string
           id?: string
+          payment_intent_id?: string | null
+          payment_session_id?: string | null
+          payment_status?: string | null
           property_id: string
           status?: string
           total_cost: number
@@ -45,6 +51,9 @@ export type Database = {
           created_at?: string
           guest_id?: string
           id?: string
+          payment_intent_id?: string | null
+          payment_session_id?: string | null
+          payment_status?: string | null
           property_id?: string
           status?: string
           total_cost?: number

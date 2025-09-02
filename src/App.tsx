@@ -13,6 +13,8 @@ import PropertyManagement from "./pages/PropertyManagement";
 import AddProperty from "./pages/AddProperty";
 import Bookings from "./pages/Bookings";
 import HostBookings from "./pages/HostBookings";
+import PaymentSuccess from "./pages/PaymentSuccess";
+import PaymentCanceled from "./pages/PaymentCanceled";
 import { DashboardLayout } from "./layouts/DashboardLayout";
 
 const queryClient = new QueryClient();
@@ -33,6 +35,8 @@ const App = () => (
             <Route path="/dashboard/properties/add" element={<DashboardLayout><AddProperty /></DashboardLayout>} />
             <Route path="/bookings" element={<Bookings />} />
             <Route path="/dashboard/bookings" element={<DashboardLayout><HostBookings /></DashboardLayout>} />
+            <Route path="/payment-success" element={<PaymentSuccess />} />
+            <Route path="/payment-canceled" element={<PaymentCanceled />} />
             {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
             <Route path="*" element={<NotFound />} />
           </Routes>
